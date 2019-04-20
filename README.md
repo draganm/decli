@@ -1,4 +1,4 @@
-# (De)clarative CLI
+# De(clarative) CLI
 
 Purpose of DeCLI is to simplify parsing complex CLI arguments and defining rich CLI tools with minimal amount of required code.
 
