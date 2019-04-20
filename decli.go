@@ -1,6 +1,7 @@
 package decli
 
 import (
+	"log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -13,11 +14,16 @@ type Command interface {
 	Run(args []string) error
 }
 
+func RunAndFinish(cmd Command, args []string) {
+	err := Run(cmd, args)
+	if err != nil {
+		log.Fatalf("error: %s\n", err.Error())
+	}
+}
+
 func Run(cmd Command, args []string) error {
 	v := reflect.ValueOf(cmd).Elem()
 	t := reflect.TypeOf(cmd).Elem()
-
-	// fields := map[string]string{}
 
 	app := &cli.App{
 		Action: func(c *cli.Context) error {
@@ -53,6 +59,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       fv.String(),
 				Destination: (*string)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int:
@@ -62,6 +69,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       int(fv.Int()),
 				Destination: (*int)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint:
@@ -71,6 +79,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       uint(fv.Uint()),
 				Destination: (*uint)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int64:
@@ -80,6 +89,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       fv.Int(),
 				Destination: (*int64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint64:
@@ -89,6 +99,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       fv.Uint(),
 				Destination: (*uint64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Float64:
@@ -98,6 +109,7 @@ func Run(cmd Command, args []string) error {
 				Hidden:      hidden,
 				Aliases:     aliases,
 				DefaultText: defaultText,
+				Value:       fv.Float(),
 				Destination: (*float64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		}
