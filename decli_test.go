@@ -17,6 +17,7 @@ type MyApp struct {
 	SomeUInt64   uint64  `name:"some-uint64" usage:"a uint64"`
 	SomeFloat64  float64 `name:"some-float64" usage:"a float64"`
 	SomeDuration time.Duration
+	SomeBool     bool
 	Sub          *SubCommand
 }
 
@@ -49,6 +50,7 @@ func TestDecli(t *testing.T) {
 		"--some-int64", "234",
 		"--some-uint64", "789",
 		"--some-duration", "5ms",
+		"--some-bool", "true",
 	})
 
 	require.Nil(err)
@@ -59,6 +61,7 @@ func TestDecli(t *testing.T) {
 	require.Equal(uint64(789), x.SomeUInt64)
 	require.Equal(12.3, x.SomeFloat64)
 	require.Equal(5*time.Millisecond, x.SomeDuration)
+	require.Equal(true, x.SomeBool)
 
 }
 

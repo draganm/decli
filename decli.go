@@ -147,6 +147,17 @@ func Run(cmd Command, args []string) error {
 				EnvVars:     envVars,
 				Destination: (*float64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
+		case reflect.Bool:
+			app.Flags = append(app.Flags, &cli.BoolFlag{
+				Name:        name,
+				Usage:       usage,
+				Hidden:      hidden,
+				Aliases:     aliases,
+				DefaultText: defaultText,
+				Value:       fv.Bool(),
+				EnvVars:     envVars,
+				Destination: (*bool)(unsafe.Pointer(fv.Addr().Pointer())),
+			})
 		// case reflect.Struct:
 		case reflect.Ptr:
 			cmd, err := createCommand(fv, ft)
@@ -218,7 +229,6 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 
 		switch fv.Type().Kind() {
 		case reflect.String:
-			log.Println("name", name)
 			cmd.Flags = append(cmd.Flags, &cli.StringFlag{
 				Name:        name,
 				Usage:       usage,
@@ -296,6 +306,17 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Value:       fv.Float(),
 				EnvVars:     envVars,
 				Destination: (*float64)(unsafe.Pointer(fv.Addr().Pointer())),
+			})
+		case reflect.Bool:
+			cmd.Flags = append(cmd.Flags, &cli.BoolFlag{
+				Name:        name,
+				Usage:       usage,
+				Hidden:      hidden,
+				Aliases:     aliases,
+				DefaultText: defaultText,
+				Value:       fv.Bool(),
+				EnvVars:     envVars,
+				Destination: (*bool)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		// case reflect.Struct:
 		case reflect.Ptr:
