@@ -17,6 +17,10 @@ type Command interface {
 	Run(args []string) error
 }
 
+type Before interface {
+	Before(args []string) error
+}
+
 func RunAndFinish(cmd Command, args []string) {
 	err := Run(cmd, args)
 	if err != nil {
@@ -24,15 +28,24 @@ func RunAndFinish(cmd Command, args []string) {
 	}
 }
 
-func Run(cmd Command, args []string) error {
+func Run(cmd interface{}, args []string) error {
 	v := reflect.ValueOf(cmd).Elem()
 	t := reflect.TypeOf(cmd).Elem()
 
-	app := &cli.App{
-		Action: func(c *cli.Context) error {
+	app := &cli.App{}
 
-			return cmd.Run(c.Args().Slice())
-		},
+	rc, isCommand := cmd.(Command)
+	if isCommand {
+		app.Action = func(c *cli.Context) error {
+			return rc.Run(c.Args().Slice())
+		}
+	}
+
+	bf, isBefore := cmd.(Before)
+	if isBefore {
+		app.Before = func(c *cli.Context) error {
+			return bf.Before(c.Args().Slice())
+		}
 	}
 
 	for i := 0; i < t.NumField(); i++ {
@@ -178,19 +191,26 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 	if name == "" {
 		name = strcase.KebabCase(sf.Name)
 	}
-	cm, isCommand := v.Interface().(Command)
-	if !isCommand {
-		return nil, errors.Errorf("%#v is not a Command", v.Kind())
-	}
-
-	v = v.Elem()
 
 	cmd := &cli.Command{
 		Name: name,
-		Action: func(c *cli.Context) error {
-			return cm.Run(c.Args().Slice())
-		},
 	}
+	cm, isCommand := v.Interface().(Command)
+
+	if isCommand {
+		cmd.Action = func(c *cli.Context) error {
+			return cm.Run(c.Args().Slice())
+		}
+	}
+
+	bf, isBefore := v.Interface().(Before)
+	if isBefore {
+		cmd.Before = func(c *cli.Context) error {
+			return bf.Before(c.Args().Slice())
+		}
+	}
+
+	v = v.Elem()
 
 	t := v.Type()
 
