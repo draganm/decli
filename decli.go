@@ -8,6 +8,7 @@ import (
 	"unsafe"
 
 	"github.com/pkg/errors"
+	"github.com/stoewer/go-strcase"
 	"gopkg.in/urfave/cli.v2"
 )
 
@@ -38,6 +39,10 @@ func Run(cmd Command, args []string) error {
 		fv := v.Field(i)
 
 		name := ft.Tag.Get("name")
+
+		if name == "" {
+			name = strcase.KebabCase(ft.Name)
+		}
 		usage := ft.Tag.Get("usage")
 		hidden, err := strconv.ParseBool(ft.Tag.Get("hidden"))
 		if err != nil {
@@ -130,6 +135,9 @@ func Run(cmd Command, args []string) error {
 
 func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error) {
 	name := sf.Tag.Get("name")
+	if name == "" {
+		name = strcase.KebabCase(sf.Name)
+	}
 	cm, isCommand := v.Interface().(Command)
 	if !isCommand {
 		return nil, errors.Errorf("%#v is not a Command", v.Kind())

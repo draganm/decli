@@ -8,13 +8,13 @@ import (
 )
 
 type MyApp struct {
-	SomeString  string  `name:"some-string" usage:"a string"`
+	SomeString  string
 	SomeInt     int     `name:"some-int" usage:"an int"`
 	SomeUint    uint    `name:"some-uint" usage:"a uint"`
 	SomeInt64   int64   `name:"some-int64" usage:"an int64"`
 	SomeUInt64  uint64  `name:"some-uint64" usage:"a uint64"`
 	SomeFloat64 float64 `name:"some-float64" usage:"a float64"`
-	*SubCommand `name:"sub"`
+	Sub         *SubCommand
 }
 
 type SubCommand struct {
@@ -34,7 +34,7 @@ func TestDecli(t *testing.T) {
 	require := require.New(t)
 
 	x := &MyApp{
-		SubCommand: &SubCommand{},
+		Sub: &SubCommand{},
 	}
 
 	err := decli.Run(x, []string{
@@ -62,7 +62,7 @@ func TestSubCommand(t *testing.T) {
 	require := require.New(t)
 
 	x := &MyApp{
-		SubCommand: &SubCommand{
+		Sub: &SubCommand{
 			// Foo: "abc",
 		},
 	}
@@ -73,6 +73,6 @@ func TestSubCommand(t *testing.T) {
 	})
 
 	require.Nil(err)
-	require.Equal("abc", x.SubCommand.Foo)
+	require.Equal("abc", x.Sub.Foo)
 
 }
