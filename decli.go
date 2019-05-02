@@ -21,7 +21,7 @@ type Before interface {
 	Before(args []string) error
 }
 
-func RunAndFinish(cmd Command, args []string) {
+func RunAndFinish(cmd inteface{}, args []string) {
 	err := Run(cmd, args)
 	if err != nil {
 		log.Fatalf("error: %s\n", err.Error())
