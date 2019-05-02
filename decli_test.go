@@ -8,12 +8,21 @@ import (
 )
 
 type MyApp struct {
-	SomeString  string  `name:"some-string" usage:"a string"`
+	SomeString  string
 	SomeInt     int     `name:"some-int" usage:"an int"`
 	SomeUint    uint    `name:"some-uint" usage:"a uint"`
 	SomeInt64   int64   `name:"some-int64" usage:"an int64"`
 	SomeUInt64  uint64  `name:"some-uint64" usage:"a uint64"`
 	SomeFloat64 float64 `name:"some-float64" usage:"a float64"`
+	Sub         *SubCommand
+}
+
+type SubCommand struct {
+	Foo string `name:"foo"`
+}
+
+func (mc *SubCommand) Run(args []string) error {
+	return nil
 }
 
 func (m *MyApp) Run(args []string) error {
@@ -24,7 +33,9 @@ func TestDecli(t *testing.T) {
 
 	require := require.New(t)
 
-	x := &MyApp{}
+	x := &MyApp{
+		Sub: &SubCommand{},
+	}
 
 	err := decli.Run(x, []string{
 		"whatevs",
@@ -43,5 +54,25 @@ func TestDecli(t *testing.T) {
 	require.Equal(int64(234), x.SomeInt64)
 	require.Equal(uint64(789), x.SomeUInt64)
 	require.Equal(12.3, x.SomeFloat64)
+
+}
+
+func TestSubCommand(t *testing.T) {
+
+	require := require.New(t)
+
+	x := &MyApp{
+		Sub: &SubCommand{
+			// Foo: "abc",
+		},
+	}
+	err := decli.Run(x, []string{
+		"whatevs",
+		"sub",
+		"--foo", "abc",
+	})
+
+	require.Nil(err)
+	require.Equal("abc", x.Sub.Foo)
 
 }
