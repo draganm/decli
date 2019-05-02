@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 	"unsafe"
 
 	"github.com/pkg/errors"
@@ -101,6 +102,19 @@ func Run(cmd Command, args []string) error {
 				Destination: (*uint)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int64:
+			if fv.Type().String() == "time.Duration" {
+				app.Flags = append(app.Flags, &cli.DurationFlag{
+					Name:        name,
+					Usage:       usage,
+					Hidden:      hidden,
+					Aliases:     aliases,
+					DefaultText: defaultText,
+					Value:       time.Duration(fv.Int()),
+					EnvVars:     envVars,
+					Destination: (*time.Duration)(unsafe.Pointer(fv.Addr().Pointer())),
+				})
+				continue
+			}
 			app.Flags = append(app.Flags, &cli.Int64Flag{
 				Name:        name,
 				Usage:       usage,
@@ -238,6 +252,19 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Destination: (*uint)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int64:
+			if fv.Type().String() == "time.Duration" {
+				cmd.Flags = append(cmd.Flags, &cli.DurationFlag{
+					Name:        name,
+					Usage:       usage,
+					Hidden:      hidden,
+					Aliases:     aliases,
+					DefaultText: defaultText,
+					Value:       time.Duration(fv.Int()),
+					EnvVars:     envVars,
+					Destination: (*time.Duration)(unsafe.Pointer(fv.Addr().Pointer())),
+				})
+				continue
+			}
 			cmd.Flags = append(cmd.Flags, &cli.Int64Flag{
 				Name:        name,
 				Usage:       usage,
