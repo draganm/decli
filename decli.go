@@ -49,6 +49,15 @@ func Run(cmd Command, args []string) error {
 			hidden = false
 		}
 
+		var envVars []string
+		envVarsString := ft.Tag.Get("envVars")
+		if envVarsString == "" {
+			envVarsString = strings.ToUpper(strings.ReplaceAll(name, "-", "_"))
+		}
+		for _, p := range strings.Split(envVarsString, ",") {
+			envVars = append(envVars, strings.TrimSpace(p))
+		}
+
 		defaultText := ft.Tag.Get("defaultText")
 
 		var aliases []string
@@ -66,6 +75,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.String(),
+				EnvVars:     envVars,
 				Destination: (*string)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int:
@@ -76,6 +86,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       int(fv.Int()),
+				EnvVars:     envVars,
 				Destination: (*int)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint:
@@ -86,6 +97,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       uint(fv.Uint()),
+				EnvVars:     envVars,
 				Destination: (*uint)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int64:
@@ -96,6 +108,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Int(),
+				EnvVars:     envVars,
 				Destination: (*int64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint64:
@@ -106,6 +119,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Uint(),
+				EnvVars:     envVars,
 				Destination: (*uint64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Float64:
@@ -116,6 +130,7 @@ func Run(cmd Command, args []string) error {
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Float(),
+				EnvVars:     envVars,
 				Destination: (*float64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		// case reflect.Struct:
@@ -159,6 +174,10 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 		fv := v.Field(i)
 
 		name := ft.Tag.Get("name")
+		if name == "" {
+			name = strcase.KebabCase(ft.Name)
+		}
+
 		usage := ft.Tag.Get("usage")
 		hidden, err := strconv.ParseBool(ft.Tag.Get("hidden"))
 		if err != nil {
@@ -173,6 +192,16 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 			aliases = strings.Split(ft.Tag.Get("aliases"), " ")
 		}
 
+		var envVars []string
+		envVarsString := ft.Tag.Get("envVars")
+		if envVarsString == "" {
+			envVarsString = strings.ToUpper(strings.ReplaceAll(name, "-", "_"))
+		}
+
+		for _, p := range strings.Split(envVarsString, ",") {
+			envVars = append(envVars, strings.TrimSpace(p))
+		}
+
 		switch fv.Type().Kind() {
 		case reflect.String:
 			log.Println("name", name)
@@ -183,6 +212,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.String(),
+				EnvVars:     envVars,
 				Destination: (*string)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int:
@@ -193,6 +223,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       int(fv.Int()),
+				EnvVars:     envVars,
 				Destination: (*int)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint:
@@ -203,6 +234,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       uint(fv.Uint()),
+				EnvVars:     envVars,
 				Destination: (*uint)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Int64:
@@ -213,6 +245,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Int(),
+				EnvVars:     envVars,
 				Destination: (*int64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Uint64:
@@ -223,6 +256,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Uint(),
+				EnvVars:     envVars,
 				Destination: (*uint64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		case reflect.Float64:
@@ -233,6 +267,7 @@ func createCommand(v reflect.Value, sf reflect.StructField) (*cli.Command, error
 				Aliases:     aliases,
 				DefaultText: defaultText,
 				Value:       fv.Float(),
+				EnvVars:     envVars,
 				Destination: (*float64)(unsafe.Pointer(fv.Addr().Pointer())),
 			})
 		// case reflect.Struct:

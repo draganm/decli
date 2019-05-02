@@ -1,6 +1,7 @@
 package decli_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/draganm/decli"
@@ -37,6 +38,7 @@ func TestDecli(t *testing.T) {
 		Sub: &SubCommand{},
 	}
 
+	os.Setenv("SOME_FLOAT64", "12.3")
 	err := decli.Run(x, []string{
 		"whatevs",
 		"--some-string", "abc",
@@ -44,7 +46,6 @@ func TestDecli(t *testing.T) {
 		"--some-uint", "456",
 		"--some-int64", "234",
 		"--some-uint64", "789",
-		"--some-float64", "12.3",
 	})
 
 	require.Nil(err)
