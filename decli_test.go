@@ -3,19 +3,21 @@ package decli_test
 import (
 	"os"
 	"testing"
+	"time"
 
 	"github.com/draganm/decli"
 	"github.com/stretchr/testify/require"
 )
 
 type MyApp struct {
-	SomeString  string
-	SomeInt     int     `name:"some-int" usage:"an int"`
-	SomeUint    uint    `name:"some-uint" usage:"a uint"`
-	SomeInt64   int64   `name:"some-int64" usage:"an int64"`
-	SomeUInt64  uint64  `name:"some-uint64" usage:"a uint64"`
-	SomeFloat64 float64 `name:"some-float64" usage:"a float64"`
-	Sub         *SubCommand
+	SomeString   string
+	SomeInt      int     `name:"some-int" usage:"an int"`
+	SomeUint     uint    `name:"some-uint" usage:"a uint"`
+	SomeInt64    int64   `name:"some-int64" usage:"an int64"`
+	SomeUInt64   uint64  `name:"some-uint64" usage:"a uint64"`
+	SomeFloat64  float64 `name:"some-float64" usage:"a float64"`
+	SomeDuration time.Duration
+	Sub          *SubCommand
 }
 
 type SubCommand struct {
@@ -46,6 +48,7 @@ func TestDecli(t *testing.T) {
 		"--some-uint", "456",
 		"--some-int64", "234",
 		"--some-uint64", "789",
+		"--some-duration", "5ms",
 	})
 
 	require.Nil(err)
@@ -55,6 +58,7 @@ func TestDecli(t *testing.T) {
 	require.Equal(int64(234), x.SomeInt64)
 	require.Equal(uint64(789), x.SomeUInt64)
 	require.Equal(12.3, x.SomeFloat64)
+	require.Equal(5*time.Millisecond, x.SomeDuration)
 
 }
 
