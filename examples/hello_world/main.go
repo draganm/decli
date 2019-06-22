@@ -13,7 +13,7 @@ type App struct {
 	Age       int    `name:"age" usage:"your age"`
 }
 
-func (a *App) Run([]string) error {
+func (a App) Run([]string) error {
 	fmt.Printf("Hello %s %s (%d)\n", a.FirstName, a.LastName, a.Age)
 	return nil
 }
