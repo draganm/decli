@@ -18,18 +18,18 @@ type MyApp struct {
 	SomeFloat64  float64 `name:"some-float64" usage:"a float64"`
 	SomeDuration time.Duration
 	SomeBool     bool
-	Sub          *SubCommand
+	Sub          SubCommand
 }
 
 type SubCommand struct {
 	Foo string `name:"foo"`
 }
 
-func (mc *SubCommand) Run(args []string) error {
+func (mc SubCommand) Run(args []string) error {
 	return nil
 }
 
-func (m *MyApp) Run(args []string) error {
+func (m MyApp) Run(args []string) error {
 	return nil
 }
 
@@ -38,7 +38,7 @@ func TestDecli(t *testing.T) {
 	require := require.New(t)
 
 	x := &MyApp{
-		Sub: &SubCommand{},
+		Sub: SubCommand{},
 	}
 
 	os.Setenv("SOME_FLOAT64", "12.3")
@@ -70,7 +70,7 @@ func TestSubCommand(t *testing.T) {
 	require := require.New(t)
 
 	x := &MyApp{
-		Sub: &SubCommand{
+		Sub: SubCommand{
 			// Foo: "abc",
 		},
 	}
