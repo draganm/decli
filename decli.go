@@ -9,7 +9,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/stoewer/go-strcase"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 type Command interface {
