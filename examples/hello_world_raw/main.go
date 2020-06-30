@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {

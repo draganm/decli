@@ -2,7 +2,7 @@
 
 Purpose of DeCLI is to simplify parsing complex CLI arguments and defining rich CLI tools with minimal amount of required code.
 
-DeCLI builds on top of [cli](https://gopkg.in/urfave/cli.v2). It relies heavily on defining CLI parameters as field tags in Golang structs instead of programmatically defining the arguments using Go code.
+DeCLI builds on top of [cli](https://github.com/urfave/cli/v2). It relies heavily on defining CLI parameters as field tags in Golang structs instead of programmatically defining the arguments using Go code.
 
 ## Why should I use it?
 
@@ -36,7 +36,7 @@ func main() {
 }
 ```
 
-as opposed to using raw [cli](https://gopkg.in/urfave/cli.v2):
+as opposed to using raw [cli](https://github.com/urfave/cli/v2):
 
 ```go
 package main
@@ -46,7 +46,7 @@ import (
     "log"
     "os"
 
-    "gopkg.in/urfave/cli.v2"
+    "github.com/urfave/cli/v2"
 )
 
 func main() {
